@@ -1,0 +1,217 @@
+This line-code design increases download and upload on the server through unbound and pihole. Recommends more than 8 cores with a higher IPC and more than 32 GB of fast RAM if it's possible.
+
+--------------------------------------------------------------------------
+
+Sysctl Editor: { sudo nano /etc/sysctl.conf }
+
+Sysctl Updater: { sysctl -p }
+
+Sysctl Supported List: { sysctl -a }
+
+==========================================================================
+
+# Kernel Related Tweaks
+
+kernel.unprivileged_bpf_disabled = 1
+kernel.sysrq = 0
+kernel.core_uses_pid = 1
+kernel.msgmni = 32768
+kernel.msgmnb = 33554432
+kernel.msgmax = 67108864
+kernel.shmmax = 68719476736
+kernel.shmall = 4294967296
+kernel.sched_rt_runtime_us = -1
+kernel.sched_child_runs_first = 1
+kernel.sched_rr_timeslice_ms = 0
+kernel.sched_rt_period_us = 1
+kernel.perf_cpu_time_max_percent = 1
+kernel.dmesg_restrict = 1
+kernel.pid_max = 4194304
+kernel.randomize_va_space = 2
+kernel.kptr_restrict = 1
+kernel.sched_energy_aware = 0
+kernel.sched_cfs_bandwidth_slice_us = 1
+kernel.sched_deadline_period_min_us = 1
+kernel.keys.gc_delay = 1
+
+# Net Core Tweaks
+
+net.core.netdev_max_backlog = 2139999999
+net.core.default_qdisc = pfifo_fast
+net.core.somaxconn = 2139999999
+net.core.netdev_budget = 2139999999
+net.core.dev_weight = 1999999999
+net.core.busy_read = 70000000
+net.core.busy_poll = 70000000
+net.core.netdev_tstamp_prequeue = 3
+net.core.dev_weight_rx_bias = 1
+net.core.dev_weight_tx_bias = 1
+net.core.wmem_default = 1999999999
+net.core.wmem_max = 2139999999
+net.core.optmem_max = 2139999999
+net.core.rmem_default = 1999999999
+net.core.rmem_max = 1999999999
+net.core.netdev_budget_usecs = 0
+net.core.flow_limit_table_len = 1073741824
+net.core.bpf_jit_limit = 106256
+
+# Net IPv4 Tweaks
+
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.all.secure_redirects = 0
+net.ipv4.conf.all.send_redirects = 0
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.all.forwarding = 0
+net.ipv4.conf.all.bootp_relay = 0
+net.ipv4.conf.all.proxy_arp = 0
+net.ipv4.conf.all.log_martians = 0
+net.ipv4.conf.all.igmpv2_unsolicited_report_interval = 2099999999
+net.ipv4.conf.all.igmpv3_unsolicited_report_interval = 2099999999
+
+net.ipv4.conf.default.accept_redirects = 0
+net.ipv4.conf.default.secure_redirects = 0
+net.ipv4.conf.default.send_redirects = 0
+net.ipv4.conf.default.rp_filter = 1
+net.ipv4.conf.default.forwarding = 0
+net.ipv4.conf.default.log_martians = 0
+net.ipv4.conf.default.accept_source_route = 0
+net.ipv4.conf.default.igmpv2_unsolicited_report_interval = 2099999999
+net.ipv4.conf.default.igmpv3_unsolicited_report_interval = 2099999999
+
+net.ipv4.neigh.lo.proxy_delay = 1
+net.ipv4.neigh.lo.base_reachable_time_ms = 1
+net.ipv4.neigh.lo.retrans_time_ms = 1
+net.ipv4.neigh.lo.base_reachable_time_ms = 1
+net.ipv4.neigh.lo.delay_first_probe_time = 1
+net.ipv4.neigh.lo.anycast_delay = 1
+net.ipv4.conf.lo.igmpv2_unsolicited_report_interval = 2099999999
+net.ipv4.conf.lo.igmpv3_unsolicited_report_interval = 2099999999
+
+# Ethernet adapters are usually enp(x)s(y) or eth(x) just change based on the name of ethernet. The x and y # values are depended on the ethernet adapter name.
+
+net.ipv4.neigh.enp4s0.retrans_time_ms = 1
+net.ipv4.neigh.enp4s0.base_reachable_time_ms = 1
+net.ipv4.neigh.enp4s0.delay_first_probe_time = 1
+net.ipv4.neigh.enp4s0.anycast_delay = 1
+net.ipv4.conf.enp4s0.igmpv2_unsolicited_report_interval = 2099999999
+net.ipv4.conf.enp4s0.igmpv3_unsolicited_report_interval = 2099999999
+
+net.ipv4.tcp_window_scaling = 1
+net.ipv4.tcp_sack = 1
+net.ipv4.tcp_fastopen = 1
+net.ipv4.tcp_max_tw_buckets = 2139999999
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_timestamps = 1
+net.ipv4.tcp_congestion_control = highspeed
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_fin_timeout = 1
+net.ipv4.tcp_slow_start_after_idle = 0
+net.ipv4.tcp_rfc1337 = 1
+net.ipv4.tcp_keepalive_time = 300
+net.ipv4.tcp_keepalive_intvl = 60
+net.ipv4.tcp_keepalive_probes = 5
+net.ipv4.tcp_dsack = 1
+net.ipv4.tcp_fack = 1
+net.ipv4.tcp_syn_retries = 2
+net.ipv4.tcp_synack_retries = 2
+net.ipv4.tcp_orphan_retries = 0
+net.ipv4.tcp_challenge_ack_limit = 999999999
+net.ipv4.tcp_low_latency = 1
+net.ipv4.tcp_mtu_probing = 1
+net.ipv4.tcp_no_metrics_save = 1
+net.ipv4.tcp_reordering = 3
+net.ipv4.tcp_moderate_rcvbuf = 1
+net.ipv4.tcp_workaround_signed_windows = 1
+net.ipv4.tcp_ecn = 2
+net.ipv4.tcp_notsent_lowat = 2097152
+net.ipv4.tcp_max_orphans = 1999999999
+net.ipv4.tcp_retries2 = 10
+net.ipv4.tcp_retries1 = 2
+net.ipv4.tcp_comp_sack_delay_ns = 0
+net.ipv4.tcp_comp_sack_slack_ns = 0
+net.ipv4.tcp_no_ssthresh_metrics_save = 1
+net.ipv4.tcp_min_tso_segs = 8
+net.ipv4.tcp_pacing_ss_ratio = 5
+net.ipv4.tcp_limit_output_bytes = 1999999999
+net.ipv4.tcp_wmem = 1913741824 2000612736 2139999999
+net.ipv4.tcp_mem = 13305843009213693952 14611686018427387904 15223372036854775808
+net.ipv4.tcp_rmem = 1913741824 2000612736 2139999999
+net.ipv4.tcp_max_syn_backlog = 2139999999
+net.ipv4.tcp_invalid_ratelimit = 0
+net.ipv4.tcp_base_mss = 1999999999
+net.ipv4.tcp_comp_sack_nr = 255
+
+# This Breaks Linux Update and All Websites
+net.ipv4.udp_mem = 9035054883553280000 9035054883553280000 9035054883553280000
+
+net.ipv4.udp_rmem_min = 1999999999
+net.ipv4.udp_wmem_min = 1999999999
+net.ipv4.icmp_echo_ignore_all = 1
+net.ipv4.icmp_echo_ignore_broadcasts = 1
+net.ipv4.icmp_ignore_bogus_error_responses = 1
+net.ipv4.icmp_ratelimit = 0
+net.ipv4.neigh.default.gc_thresh3 = 2021225472
+net.ipv4.neigh.default.gc_thresh2 = 1950612736
+net.ipv4.neigh.default.gc_thresh1 = 1855306368
+net.ipv4.neigh.default.gc_interval = 5
+net.ipv4.neigh.default.proxy_qlen = 1536
+net.ipv4.neigh.default.unres_qlen = 12
+net.ipv4.neigh.default.retrans_time_ms = 1
+net.ipv4.neigh.default.base_reachable_time_ms = 1
+net.ipv4.ipfrag_time = 5
+net.ipv4.ip_default_ttl = 64
+net.ipv4.ip_forward = 0
+net.ipv4.ip_local_port_range = 30000 65535
+net.ipv4.ip_no_pmtu_disc = 0
+net.ipv4.ipfrag_low_thresh = 8590300515919104
+net.ipv4.ipfrag_high_thresh = 9000500021225472
+net.ipv4.route.flush = 1
+net.ipv4.route.gc_min_interval = 0
+net.ipv4.route.gc_min_interval_ms = 1
+net.ipv4.route.gc_timeout = 1
+net.ipv4.route.mtu_expires = 1
+net.ipv4.route.max_size = 2099999999
+net.ipv4.route.min_adv_mss = 2099999999
+net.ipv4.route.min_pmtu = 999999999
+net.ipv4.route.redirect_load = 1999999999
+net.ipv4.route.redirect_number = 999999999
+net.ipv4.route.redirect_silence = 1999999999
+net.ipv4.route.max_size = 1999999999
+net.ipv4.route.error_burst = 10
+net.ipv4.route.error_cost = 5
+net.ipv4.route.gc_elasticity = 999999999
+net.ipv4.route.gc_interval = 4200000
+net.ipv4.route.gc_thresh = -1
+net.ipv4.route.gc_min_interval_ms = 1
+net.ipv4.cipso_cache_bucket_size = 220000
+
+# Net IPv6 Tweaks
+
+net.ipv6.conf.all.accept_redirects = 0
+net.ipv6.conf.all.forwarding = 0
+net.ipv6.conf.all.autoconf = 0
+net.ipv6.conf.all.accept_ra = 0
+net.ipv6.conf.all.accept_source_route = 0
+net.ipv6.conf.default.accept_redirects = 0
+net.ipv6.conf.default.forwarding = 0
+net.ipv6.conf.default.autoconf = 0
+net.ipv6.conf.default.accept_ra = 0
+net.ipv6.conf.default.accept_source_route = 0
+net.ipv6.conf.lo.autoconf = 0
+net.ipv6.conf.lo.accept_ra = 0
+net.ipv6.conf.enp4s0.autoconf = 0
+net.ipv6.conf.enp4s0.accept_ra = 0
+net.ipv6.ip6frag_low_thresh = 8590409515919104
+net.ipv6.ip6frag_high_thresh = 9000900521225472
+net.ipv6.route.flush = 1
+
+# Net Unix Tweaks
+
+net.unix.max_dgram_qlen = 1999999999
+
+# Other Tweaks
+
+fs.file-max = 8388608
+fs.inotify.max_user_watches = 8388608
+fs.suid_dumpable = 1

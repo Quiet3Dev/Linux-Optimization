@@ -1,0 +1,88 @@
+ -----------
+|  Desktop  |
+ -----------
+
+The desktop configuration is for high-end servers and causes issues with Pi-Hole to break the Web GUI, forcing the user to use the command line to add domains, regex, block, or ublock. Users must add regex code to Pi-Hole after it has been setup since there is a chance Pi-Hole's web GUI will break more likely if you code from a warning and is dangerous.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Safe Tweaks for Linux:
+
+The only tweak that would be safe is changing the power state in Linux from balance to performance mode; it should work for all desktops and laptops.
+
+List of Linux Code for Command Line:
+---------------------------------------------------------------------------------
+
+echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+
+---------------------------------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Warning Tweaks for Linux:
+
+These tweaks are designed to increase the speed of queries and reduce access time for Pi-Hole on the network. At the same time, it will create bugs on the Pi-Hole web GUI since faster responses tend to break when the Linux kernel and hardware are running so fast that the GUI can't keep up. The command line still works, but you will need to learn the commands to include domains. However, regex will not work properly on the command line, so it is best to add regex before adding these tweaks.
+
+List of Linux Code for Command Line:
+---------------------------------------------------------------------------------
+
+echo 0 > /proc/sys/kernel/numa_balancing
+
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+
+echo 0 > /proc/sys/kernel/watchdog
+
+echo 0 > /proc/sys/kernel/nmi_watchdog
+
+echo 1 > /sys/kernel/mm/ksm/run
+
+echo 999999999 > /sys/kernel/mm/ksm/sleep_millisecs
+
+echo 1 > /proc/sys/kernel/sched_child_runs_first
+
+echo 0 > /proc/sys/kernel/sched_schedstats
+
+echo off > /proc/sys/kernel/printk_devkmsg
+
+echo -1 > /proc/sys/kernel/sched_rt_runtime_us
+
+echo 0 > /proc/sys/kernel/sched_autogroup_enabled
+
+echo 0 > /proc/sys/kernel/split_lock_mitigate
+
+echo 0 | sudo tee /sys/bus/workqueue/devices/writeback/numa
+
+echo "hpet" | sudo tee /sys/devices/system/clocksource/clocksource0/current_clocksource
+
+echo 0 | sudo tee /sys/devices/system/machinecheck/machinecheck*/check_interval
+
+echo 0 | sudo tee /sys/bus/workqueue/devices/writeback/numa
+
+echo ff > /sys/bus/workqueue/devices/writeback/cpumask
+
+echo 1 > /sys/block/sda/queue/iosched/low_latency
+
+echo 0 > /proc/sys/vm/page-cluster
+
+echo 999999 > /proc/sys/vm/stat_interval
+
+echo 115 > /proc/sys/vm/vfs_cache_pressure
+
+echo 0 > /proc/sys/vm/swappiness
+
+echo 1000 > /proc/sys/vm/watermark_scale_factor
+
+echo 0 > /proc/sys/vm/numa_stat
+
+echo 1 > /proc/sys/net/core/netdev_tstamp_prequeue
+
+echo 0 > /proc/sys/vm/dirty_ratio
+
+echo 5 > /proc/sys/vm/dirty_background_ratio
+
+for f in /proc/irq/*/smp_affinity; do echo 00000000,000000ff > $f; cat $f; done
+
+sudo swapoff -a
+
+---------------------------------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+===================================================================================================

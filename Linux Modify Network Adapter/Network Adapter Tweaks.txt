@@ -1,0 +1,123 @@
+ ----------------------------------
+|   Linux Network Adapter Tweaks   |
+ ----------------------------------
+
+This Linux network adapter tweak is focused on increasing the MTU values and tx_queue_len values for more throughput and stability in the network. This would help Pi-Hole be more responsive towards blocking domains and accepting more regex and domains due to the increased number of packets available in the network adapter. For Unbound, it will allow it to use more CPU cores in exchange for more power usage due to having more room to answer packets and reduce server ramp-up overtime compared to the default settings. Recommend modifying "ethernet [ eth(x) / enp(x)xs0 ]" and "loopback [ lo ]" to be able to increase MTU values and tx_queue_len values; however, it depends on the "ethernet" driver to allow increasing the MTU and tx_queue_len. As for "loopback," all devices are able to modify to their maximum.
+
+___________________________________________________________________________________________________
+
+[ Finding Network Adapters in Linux ]
+
+Terminal Code:
+
+ip addr
+
+___________________________________________________________________________________________________
+
+[  Linux Max Values for MTU and tx_queue_len:  ]
+
+MTU Values:
+
+Default MTU Value = 1500
+Max MTU Value = 1999999999
+
+------------------------------------------------------------------------------------
+
+tx_queue_len Values:
+
+Default tx_queue_len values = 1000
+Max tx_queue_len values = 2146999999
+
+___________________________________________________________________________________________________
+
+[ Network Adapter Tweak ]
+
+Accessing the file for changing network adapters: (Remove quotes put on terminal)
+
+" sudo nano /etc/udev/rules.d/10-network.rules "
+
+------------------------------------------------------------------------------------
+
+Code input to terminal on file for 10-network.rules:
+
+The code below is supposed to be used to, for example, modify network adapter values, which are "mtu" and "tx_queue_len," since it depends on the features network adapters have. Some values won't change, which means that network adapters don't support jumbo frames, which is fine for a normal environment. Usually, devices from Realtek and Broadcom have this issue and can't change MTU values; however, it depends on what the network adapter supports.
+
+----
+
+lo = Loopback [ IPv4: 127.0.0.1 / IPv6: ::1 ]
+
+eth / enp(x)s0 = Ethernet Adapters
+
+wlan = Wifi Adapters
+
+----
+
+Default code:
+
+lo:
+
+ACTION=="add", SUBSYSTEM=="net", KERNEL=="lo*", ATTR{mtu}="1500", ATTR{tx_queue_len}="1000"
+
+eth:
+
+ACTION=="add", SUBSYSTEM=="net", KERNEL=="eth*", ATTR{mtu}="1500", ATTR{tx_queue_len}="1000"
+
+wlan:
+
+ACTION=="add", SUBSYSTEM=="net", KERNEL=="wl*", ATTR{mtu}="1500", ATTR{tx_queue_len}="1000"
+
+----
+
+Example tweaks:
+
+lo:
+
+ACTION=="add", SUBSYSTEM=="net", KERNEL=="lo*", ATTR{mtu}="3000", ATTR{tx_queue_len}="2000"
+
+eth:
+
+ACTION=="add", SUBSYSTEM=="net", KERNEL=="eth*", ATTR{mtu}="3000", ATTR{tx_queue_len}="2000"
+
+wlan:
+
+ACTION=="add", SUBSYSTEM=="net", KERNEL=="wl*", ATTR{mtu}="3000", ATTR{tx_queue_len}="2000"
+
+------------------------------------------------------------------------------------
+
+To activate to modify network adapters tweaks: (Remove quotes [""] put on terminal )
+
+" udevadm trigger --verbose --subsystem-match=net --action=add "
+
+=============================================================================================================
+
+[ Changing TTL on Linux ]
+
+Code: 
+
+nano /proc/sys/net/ipv4/ip_default_ttl
+
+Default Value: 64
+
+Change Value (Optional): 45
+
+=============================================================================================================
+
+ -----------------------------------------
+|   Linux Network Adapter Tweaks Issues   |
+ -----------------------------------------
+
+Issue #1: Adding above the maximum MTU and / or tx_queue_len
+
+Linux will show negative values on the network adapters, which means code is not active, and it will default back to default until the tweak is removed. Also, there is a chance unbound or Pi-Hole would stop working by DNS request or overload on the system due to invalid values in the code. There is a chance you would need to reset modems and/or routers since RAM on modems and/or routers is setup in the preiovus configuration and has not adapted to the new changes, leading to a collision domain on Ethernet and modems and/or routers.
+
+Solution #1: Keep to the max limit for MTU and tx_queue_len, or find the limit if it doesn't give an error.
+
+------------------------------------------------------------------------------------------------------------
+
+Issue #2: Some PCI-E network adapters can be modify however depends on chipset.
+
+Usually Realtek or Broadcom can't modify the MTU values; however, the tx_queue_len can be modified but does give out bugs when interacting with low-latency applications, which could affect Pi-Hole and Unbound. However, this bug is very rare and usually happens when using high-core CPUs above 8 cores.
+
+Solution #2: Usually, Intel chipsets are allowed to modify the MTU values, but the maximum is usually 9000 unless they are able to go above normal jumbo frame limits.
+
+
