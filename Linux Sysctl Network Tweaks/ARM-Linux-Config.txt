@@ -1,0 +1,56 @@
+This line code design increases downloads and uploads on the server through Unbound and Pi-hole. It was designed for the Raspberry Pi Zero W, which has a 1 GHz single core and 512 MB of RAM. Since the Raspberry Pi has low computing power, it will be limited by the number of packets that can be answered from devices in the network.
+
+--------------------------------------------------------------------------
+
+Sysctl Editor: { sudo nano /etc/sysctl.conf }
+
+Sysctl Updater: { sysctl -p }
+
+Sysctl Supported List: { sysctl -a }
+
+==========================================================================
+
+# Net Core Tweaks
+
+net.core.default_qdisc = pfifo_fast
+net.core.somaxconn = 2147483647
+net.core.busy_read = 900000
+net.core.busy_poll = 900000
+net.core.netdev_budget = 2147483647
+net.core.dev_weight = 2147483647
+
+# Net Unix Tweaks
+
+net.unix.max_dgram_qlen = 2147483647
+
+# Net IPv4 Tweaks
+
+net.ipv4.conf.all.rp_filter = 1
+
+net.ipv4.icmp_ratelimit = 0
+
+net.ipv4.tcp_congestion_control = htcp
+net.ipv4.tcp_invalid_ratelimit = 0
+net.ipv4.tcp_no_metrics_save = 1
+net.ipv4.tcp_mtu_probing = 1
+net.ipv4.tcp_dsack = 1
+net.ipv4.tcp_fack = 1
+net.ipv4.tcp_moderate_rcvbuf = 1
+net.ipv4.tcp_low_latency = 1
+net.ipv4.tcp_sack = 1
+net.ipv4.tcp_timestamps = 1
+net.ipv4.tcp_max_syn_backlog = 2147483647
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_fin_timeout = 1
+
+net.ipv4.route.flush = 1
+
+# This Breaks Linux Update and All Websites
+# net.ipv4.udp_mem = 2035054883553280000 2035054883553280000 2035054883553280000
+# net.ipv4.tcp_mem = 15905843009213693952 16911686018427387904 1792337203685477>
+
+# Net IPv6 Tweaks
+
+net.ipv6.route.flush = 1
+
+
